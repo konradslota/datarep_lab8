@@ -1,12 +1,11 @@
 import React from 'react';
 import axios from 'axios';
 
-export class Create extends React.Component {
+export class Edit extends React.Component {
 
     constructor() {
         super();
 
-        //Bind methods with Events
         this.onSubmit = this.onSubmit.bind(this);
         this.onChangeTitle = this.onChangeTitle.bind(this);
         this.onChangeYear = this.onChangeYear.bind(this);
@@ -19,7 +18,26 @@ export class Create extends React.Component {
         }
     }
 
-    //Methods
+    componentDidMount(){
+        //Log movie id to console
+        console.log(this.props.match.params.id);
+
+        //Read record from database
+        axios.get('http://localhost:4000/api/movies/' + this.props.match.params.id)
+        .then(response =>{
+            this.setState({
+                _id:response.data._id,
+                Title:response.data.title,
+                Year:response.data.year,
+                Poster:response.data.poster
+            })
+        })
+        //Error catch & log to console
+        .catch((error)=>{
+            console.log(error);
+        });
+    }
+
     onChangeTitle(e) {
         this.setState({
             Title: e.target.value
@@ -45,17 +63,23 @@ export class Create extends React.Component {
         const newMovie = {
             title: this.state.Title,
             year: this.state.Year,
-            poster: this.state.Poster
+            poster: this.state.Poster,
+            _id: this.state._id
         }
 
-        //axios API link
-        axios.post('http://localhost:4000/api/movies', newMovie)
-        .then((res)=>{
-            console.log(res);
+        axios.put('http://localhost:4000/api/movies/' + this.state._id, newMovie)
+        .then(res =>{
+            console.log(res.data)
         })
-        .catch((err)=>{
-            console.log(err);
-        });
+        .catch();
+
+        // axios.post('http://localhost:4000/api/movies', newMovie)
+        // .then((res)=>{
+        //     console.log(res);
+        // })
+        // .catch((err)=>{
+        //     console.log(err);
+        // });
     }
 
     render() {
@@ -86,7 +110,7 @@ export class Create extends React.Component {
                     </div>
                     <div className="form-group">
                         <input type='submit'
-                            value='Add Movie'
+                            value='Edit Movie'
                             className='btn btn-primary'></input>
                     </div>
                 </form>

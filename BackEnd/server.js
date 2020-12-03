@@ -22,6 +22,7 @@ app.use(function (req, res, next) {
     next();
 });
 
+//Mongodb Connection
 const myConnectionString = 'mongodb+srv://admin:admin@cluster0.s1kns.mongodb.net/movies?retryWrites=true&w=majority';
 mongoose.connect(myConnectionString, { useNewUrlParser: true });
 
@@ -65,26 +66,42 @@ app.get('/api/movies', (req, res) => {
     // });
 })
 
+//Returns movie with its id
 app.get('/api/movies/:id', (req, res)=>{
     console.log(req.params.id);
 
+    //Finds movie by its id
     MovieModel.findById(req.params.id, (err, data)=>{
         res.json(data);
     })
 })
 
+app.put('/api/movies/:id', (req, res)=>{
+    console.log("Update movie: " + req.params.id);
+    console.log(req.body);
+
+    //Feletes movie from the db
+    MovieModel.findByIdAndUpdate(req.params.id, req.body, {new:true}, 
+        (err, data)=>{
+            res.send(data);
+        })
+})
+
+//Return of movies
 app.post('/api/movies', (req, res) => {
     console.log("Movie Received!")
     console.log(req.body.title)
     console.log(req.body.year)
     console.log(req.body.poster)
 
+    //Add movie to db
     MovieModel.create({
         title: req.body.title,
         year: req.body.year,
         poster: req.body.poster
     })
 
+    //User feedback 
     res.send('Item Added')
 })
 

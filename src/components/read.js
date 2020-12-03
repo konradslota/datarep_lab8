@@ -9,7 +9,7 @@ export class Read extends React.Component {
         movies: []
     };
 
-    //fethcing jsonblob link API
+    //API Data link
     componentDidMount() {
         axios.get('http://localhost:4000/api/movies')
             .then(
